@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Details</title>
+    <!-- Add CSS styles for card layout -->
+    <style>
+        body {
+            background-color: #f5f5f5;
+            /* Light gray background for the entire page */
+            font-family: Arial, sans-serif;
+            /* Use a common sans-serif font */
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            /* Increased padding for better spacing */
+        }
+
+        .card {
+            width: auto;
+            /* Auto width based on content */
+            min-width: 300px;
+            /* Minimum width for the card */
+            max-width: 500px;
+            /* Maximum width for the card */
+            margin: 10px;
+            /* Increased margin for better spacing */
+            border: 2px solid #3498db;
+            /* Border color for the card */
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #fff;
+            /* White background for the card */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* Added shadow effect for depth */
+        }
+
+        h2 {
+            font-size: 1.5em;
+            /* Larger font size for device ID */
+            margin-bottom: 15px;
+            /* Increased margin for better spacing */
+            color: #2c3e50;
+            /* Dark blue color for headings */
+        }
+
+        p {
+            font-size: 1.1em;
+            /* Slightly larger font size for details */
+            color: #555;
+            /* Dark gray color for details */
+            margin-bottom: 10px;
+            /* Increased margin for better spacing */
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            /* Increased margin for better spacing */
+        }
+
+        .btn {
+            padding: 10px 20px;
+            /* Increased padding for button */
+            margin: 0 10px;
+            /* Increased margin for better spacing */
+            background-color: #3498db;
+            /* Blue background color for button */
+            color: #fff;
+            /* White text color for button */
+            border: none;
+            /* No border */
+            border-radius: 5px;
+            /* Rounded corners */
+            cursor: pointer;
+            /* Cursor pointer on hover */
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+            /* Darker blue background color on hover */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Iterate over device_list to render each device -->
+        {% for device in device_list %}
+        <div class="card">
+            <h2>Device ID: {{ device.device_id }}</h2>
+            <p>Product Model: {{ device.Product_Model }}</p>
+            <p>Build Version: {{ device.Build_Version }}</p>
+            <p>Manufacturer: {{ device.Manufacturer }}</p>
+            <!-- Display Bluetooth status -->
+            <p>Bluetooth Status: {% if device.Bluetooth_Status %} On {% else %} Off {% endif %}</p>
+            <!-- Display Wi-Fi status -->
+            <p>Wi-Fi Status: {% if device.Wifi_Status %} On {% else %} Off {% endif %}</p>
+            <!-- Button container for Bluetooth and Wi-Fi toggles -->
+            <div class="btn-container">
+                <!-- Button to toggle Bluetooth -->
+                <button class="btn" onclick="toggleBluetooth('{{ device.device_id }}')">Toggle Bluetooth</button>
+                <!-- Button to toggle Wi-Fi -->
+                <button class="btn" onclick="toggleWifi('{{ device.device_id }}')">Toggle Wi-Fi</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- JavaScript for toggling Bluetooth and Wi-Fi -->
+    <script>
+        function toggleBluetooth(deviceId) {
+            fetch(`/toggle_bluetooth?device_id=${deviceId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to toggle Bluetooth');
+                    }
+                    // No need to show alert for successful response
+                    location.reload(); // Refresh the page to update device status
+                })
+                .catch(error => {
+                    console.error('Error toggling Bluetooth:', error);
+                    alert('Error toggling Bluetooth');
+                });
+        }
+
+        function toggleWifi(deviceId) {
+            fetch(`/toggle_wifi?device_id=${deviceId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to toggle Wi-Fi');
+                    }
+                    // No need to show alert for successful response
+                    location.reload(); // Refresh the page to update device status
+                })
+                .catch(error => {
+                    console.error('Error toggling Wi-Fi:', error);
+                    alert('Error toggling Wi-Fi');
+                });
+        }
+        // Set the interval (in milliseconds) for refreshing the page
+            const refreshInterval = 5000; // Refresh every 5 seconds
+
+            // Function to refresh the page
+            function refreshPage() {
+                location.reload(); // Reload the page
+            }
+
+            // Set an interval to call the refreshPage function periodically
+            const intervalId = setInterval(refreshPage, refreshInterval);
+    </script>
+
+
+</body>
+
+</html>
